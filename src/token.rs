@@ -1,6 +1,8 @@
-use core::fmt;
+use std::fmt;
 
-#[derive(Debug, Clone, Copy)]
+use crate::expr::LiteralToken;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TokenType {
     // single char tokens
     LeftParen,
@@ -25,6 +27,11 @@ pub enum TokenType {
     Less,
     LessEqual,
 
+    // literals
+    String,
+    Number,
+    Identifier,
+
     // keywords
     And,
     Class,
@@ -41,20 +48,25 @@ pub enum TokenType {
     This,
     True,
     Var,
-    WHile,
+    While,
 
     EOF,
 }
 
 #[derive(Debug)]
 pub struct Token {
-    pub type_of: TokenType,
+    pub token_type: TokenType,
     pub lexeme: String,
+    pub literal: LiteralToken,
     pub line: usize,
 }
 
 impl fmt::Display for Token {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "({:?}, {})", self.type_of, self.lexeme)
+        write!(
+            f,
+            "({:?}, {}, {})",
+            self.token_type, self.lexeme, self.literal
+        )
     }
 }

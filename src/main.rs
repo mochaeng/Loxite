@@ -6,24 +6,28 @@ use std::{
 
 use lexer::Lexer;
 
+mod ast_printer;
 mod error;
+mod expr;
 mod lexer;
+mod parser;
 mod token;
 
-fn run(source: &String) {
+fn run(source: &String) -> bool {
     let mut lexer = Lexer::new(source);
     let tokens = lexer.scan_tokens();
 
     tokens.into_iter().for_each(|token| println!("{:?}", token));
+    lexer.had_error
 }
 
 fn run_file(path: &String) {
     let source = fs::read_to_string(path).expect("Could not read the file");
-    run(&source);
+    let had_error = run(&source);
 
-    // if self.had_error {
-    //     exit(65);
-    // }
+    if had_error {
+        exit(65);
+    }
 }
 
 fn run_prompt() {
@@ -41,7 +45,6 @@ fn run_prompt() {
         }
 
         run(&line);
-        // had_error = false;
     }
 }
 
@@ -50,13 +53,13 @@ fn main() {
 
     println!("{:?}", args);
 
-    if args.len() >= 3 || args.len() == 2 {
+    if args.len() > 2 {
         println!("Usage: loxite [script]");
         exit(64);
     }
 
-    if args.len() == 3 {
-        run_file(&args[2]);
+    if args.len() == 2 {
+        run_file(&args[1]);
     } else {
         run_prompt();
     }
