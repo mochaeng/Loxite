@@ -1,4 +1,5 @@
-use crate::expr::{Expr, LiteralToken};
+use crate::{expr::Expr, token::LiteralToken};
+
 pub struct AstPrinter;
 
 impl AstPrinter {
@@ -40,9 +41,9 @@ fn parenthesize(name: &str, exprs: Vec<&Expr>) -> String {
 #[cfg(test)]
 mod tests {
     use crate::{
-        ast_printer::{self, AstPrinter},
-        expr::{BinaryExpr, Expr, GroupingExpr, LiteralExpr, LiteralToken, UnaryExpr},
-        token::{Token, TokenType},
+        ast_printer::AstPrinter,
+        expr::{BinaryExpr, Expr, GroupingExpr, LiteralExpr, UnaryExpr},
+        token::{LiteralToken, Token, TokenType},
     };
 
     #[test]

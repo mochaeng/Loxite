@@ -4,14 +4,7 @@ use std::{
     process::exit,
 };
 
-use lexer::Lexer;
-
-mod ast_printer;
-mod error;
-mod expr;
-mod lexer;
-mod parser;
-mod token;
+use loxite::lexer::Lexer;
 
 fn run(source: &String) -> bool {
     let mut lexer = Lexer::new(source);

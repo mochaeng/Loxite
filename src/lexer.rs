@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use crate::error;
-use crate::expr::LiteralToken;
+use crate::token::LiteralToken;
 use crate::token::Token;
 use crate::token::TokenType;
 
@@ -90,7 +90,7 @@ impl<'a> Lexer<'a> {
                 if self.is_alpha(ch) {
                     self.identifier();
                 } else {
-                    error::error(self.line, "Unexpected character.");
+                    error::lexer_error(self.line, "Unexpected character.");
                     self.had_error = true;
                 }
             }
@@ -135,7 +135,7 @@ impl<'a> Lexer<'a> {
         }
 
         if self.is_at_end() {
-            error::error(self.line, "Unterminaded string");
+            error::lexer_error(self.line, "Unterminaded string");
             self.had_error = true;
             return;
         }

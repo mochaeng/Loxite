@@ -1,6 +1,4 @@
-use std::fmt;
-
-use crate::token::Token;
+use crate::token::{LiteralToken, Token};
 
 pub enum Expr {
     Unary(Box<UnaryExpr>),
@@ -26,21 +24,4 @@ pub struct GroupingExpr {
 
 pub struct LiteralExpr {
     pub value: LiteralToken,
-}
-
-#[derive(Debug)]
-pub enum LiteralToken {
-    String(String),
-    Number(f64),
-    Empty,
-}
-
-impl fmt::Display for LiteralToken {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            LiteralToken::String(value) => write!(f, "{}", value),
-            LiteralToken::Number(value) => write!(f, "{}", value),
-            LiteralToken::Empty => write!(f, ""),
-        }
-    }
 }

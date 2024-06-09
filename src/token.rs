@@ -1,7 +1,5 @@
 use std::fmt;
 
-use crate::expr::LiteralToken;
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TokenType {
     // single char tokens
@@ -53,7 +51,7 @@ pub enum TokenType {
     EOF,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Token {
     pub token_type: TokenType,
     pub lexeme: String,
@@ -68,5 +66,24 @@ impl fmt::Display for Token {
             "({:?}, {}, {})",
             self.token_type, self.lexeme, self.literal
         )
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum LiteralToken {
+    String(String),
+    Number(f64),
+    Boolean(bool),
+    Empty,
+}
+
+impl fmt::Display for LiteralToken {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            LiteralToken::String(value) => write!(f, "{}", value),
+            LiteralToken::Number(value) => write!(f, "{}", value),
+            LiteralToken::Boolean(value) => write!(f, "{}", value),
+            LiteralToken::Empty => write!(f, ""),
+        }
     }
 }
