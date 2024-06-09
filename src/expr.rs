@@ -1,4 +1,4 @@
-use crate::token::{LiteralToken, Token};
+use crate::token::{Token, TokenLiteral};
 
 pub enum Expr {
     Unary(Box<UnaryExpr>),
@@ -23,5 +23,5 @@ pub struct GroupingExpr {
 }
 
 pub struct LiteralExpr {
-    pub value: LiteralToken,
+    pub value: TokenLiteral,
 }

@@ -1,7 +1,7 @@
 use crate::{
     error::{LoxiteError, ParserError},
     expr::{BinaryExpr, Expr, GroupingExpr, LiteralExpr, UnaryExpr},
-    token::{LiteralToken, Token, TokenType},
+    token::{Token, TokenLiteral, TokenType},
 };
 
 // --------------------- GRAMMAR -------------------------------
@@ -121,17 +121,17 @@ impl Parser {
     fn primary(&mut self) -> Result<Expr, LoxiteError> {
         if self.match_token(&[TokenType::False]) {
             return Ok(Expr::Literal(LiteralExpr {
-                value: LiteralToken::Boolean(false),
+                value: TokenLiteral::Boolean(false),
             }));
         }
         if self.match_token(&[TokenType::True]) {
             return Ok(Expr::Literal(LiteralExpr {
-                value: LiteralToken::Boolean(true),
+                value: TokenLiteral::Boolean(true),
             }));
         }
         if self.match_token(&[TokenType::Nil]) {
             return Ok(Expr::Literal(LiteralExpr {
-                value: LiteralToken::Empty,
+                value: TokenLiteral::Empty,
             }));
         }
 

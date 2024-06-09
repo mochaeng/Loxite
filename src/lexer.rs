@@ -3,8 +3,8 @@ use std::mem;
 
 use crate::error::LexerError;
 use crate::error::LoxiteError;
-use crate::token::LiteralToken;
 use crate::token::Token;
+use crate::token::TokenLiteral;
 use crate::token::TokenType;
 
 #[derive(Debug)]
@@ -41,7 +41,7 @@ impl<'a> Lexer<'a> {
         self.tokens.push(Token {
             token_type: TokenType::EOF,
             lexeme: "".to_string(),
-            literal: LiteralToken::Empty,
+            literal: TokenLiteral::Empty,
             line: self.line,
         });
 
@@ -116,10 +116,10 @@ impl<'a> Lexer<'a> {
     }
 
     fn add_token(&mut self, token_type: TokenType) {
-        self.add_token_with_literal(token_type, LiteralToken::Empty);
+        self.add_token_with_literal(token_type, TokenLiteral::Empty);
     }
 
-    fn add_token_with_literal(&mut self, token_type: TokenType, literal: LiteralToken) {
+    fn add_token_with_literal(&mut self, token_type: TokenType, literal: TokenLiteral) {
         let text = self.source[self.start..self.current]
             .iter()
             .collect::<String>();
@@ -156,7 +156,7 @@ impl<'a> Lexer<'a> {
             .iter()
             .collect::<String>();
 
-        let literal = LiteralToken::String(value);
+        let literal = TokenLiteral::String(value);
         self.add_token_with_literal(TokenType::String, literal);
     }
 
@@ -177,7 +177,7 @@ impl<'a> Lexer<'a> {
             .parse::<f64>()
             .unwrap();
 
-        let literal = LiteralToken::Number(value);
+        let literal = TokenLiteral::Number(value);
         self.add_token_with_literal(TokenType::Number, literal);
     }
 

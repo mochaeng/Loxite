@@ -55,7 +55,7 @@ pub enum TokenType {
 pub struct Token {
     pub token_type: TokenType,
     pub lexeme: String,
-    pub literal: LiteralToken,
+    pub literal: TokenLiteral,
     pub line: usize,
 }
 
@@ -70,20 +70,20 @@ impl fmt::Display for Token {
 }
 
 #[derive(Debug, Clone)]
-pub enum LiteralToken {
+pub enum TokenLiteral {
     String(String),
     Number(f64),
     Boolean(bool),
     Empty,
 }
 
-impl fmt::Display for LiteralToken {
+impl fmt::Display for TokenLiteral {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            LiteralToken::String(value) => write!(f, "{}", value),
-            LiteralToken::Number(value) => write!(f, "{}", value),
-            LiteralToken::Boolean(value) => write!(f, "{}", value),
-            LiteralToken::Empty => write!(f, ""),
+            TokenLiteral::String(value) => write!(f, "{}", value),
+            TokenLiteral::Number(value) => write!(f, "{}", value),
+            TokenLiteral::Boolean(value) => write!(f, "{}", value),
+            TokenLiteral::Empty => write!(f, ""),
         }
     }
 }

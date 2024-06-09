@@ -1,15 +1,15 @@
-use crate::{expr::Expr, token::LiteralToken};
+use crate::{expr::Expr, token::TokenLiteral};
 
 pub struct AstPrinter;
 
 impl AstPrinter {
     pub fn get_expr_as_str(&self, expr: Expr) -> String {
-        expr.visit_expr()
+        expr.print_expr()
     }
 }
 
 impl Expr {
-    fn visit_expr(&self) -> String {
+    fn print_expr(&self) -> String {
         match self {
             Expr::Binary(expr) => {
                 parenthesize(&expr.operator.lexeme, vec![&expr.left, &expr.right])
@@ -17,7 +17,7 @@ impl Expr {
             Expr::Grouping(expr) => parenthesize("group", vec![&expr.expression]),
             Expr::Unary(expr) => parenthesize(&expr.operator.lexeme, vec![&expr.right]),
             Expr::Literal(expr) => match &expr.value {
-                LiteralToken::Empty => "nil".to_string(),
+                TokenLiteral::Empty => "nil".to_string(),
                 _ => expr.value.to_string(),
             },
         }
@@ -31,7 +31,7 @@ fn parenthesize(name: &str, exprs: Vec<&Expr>) -> String {
 
     exprs.iter().for_each(|expr| {
         result.push_str(" ");
-        result.push_str(expr.visit_expr().as_str())
+        result.push_str(expr.print_expr().as_str())
     });
 
     result.push_str(")");
@@ -43,7 +43,7 @@ mod tests {
     use crate::{
         ast_printer::AstPrinter,
         expr::{BinaryExpr, Expr, GroupingExpr, LiteralExpr, UnaryExpr},
-        token::{LiteralToken, Token, TokenType},
+        token::{Token, TokenLiteral, TokenType},
     };
 
     #[test]
@@ -52,17 +52,17 @@ mod tests {
             operator: Token {
                 token_type: TokenType::Minus,
                 lexeme: "-".to_string(),
-                literal: LiteralToken::Empty,
+                literal: TokenLiteral::Empty,
                 line: 1,
             },
             right: Expr::Literal(LiteralExpr {
-                value: LiteralToken::Number(123 as f64),
+                value: TokenLiteral::Number(123 as f64),
             }),
         }));
 
         let expr2 = Expr::Grouping(Box::new(GroupingExpr {
             expression: Expr::Literal(LiteralExpr {
-                value: LiteralToken::Number(45.67),
+                value: TokenLiteral::Number(45.67),
             }),
         }));
 
@@ -78,22 +78,22 @@ mod tests {
                 operator: Token {
                     token_type: TokenType::Minus,
                     lexeme: "-".to_string(),
-                    literal: LiteralToken::Empty,
+                    literal: TokenLiteral::Empty,
                     line: 1,
                 },
                 right: Expr::Literal(LiteralExpr {
-                    value: LiteralToken::Number(123 as f64),
+                    value: TokenLiteral::Number(123 as f64),
                 }),
             })),
             operator: Token {
                 token_type: TokenType::Star,
                 lexeme: "*".to_string(),
-                literal: LiteralToken::Empty,
+                literal: TokenLiteral::Empty,
                 line: 1,
             },
             right: Expr::Grouping(Box::new(GroupingExpr {
                 expression: Expr::Literal(LiteralExpr {
-                    value: LiteralToken::Number(45.67),
+                    value: TokenLiteral::Number(45.67),
                 }),
             })),
         }));
