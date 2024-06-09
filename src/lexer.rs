@@ -1,6 +1,8 @@
 use std::collections::HashMap;
+use std::mem;
 
-use crate::error;
+use crate::error::LexerError;
+use crate::error::LoxiteError;
 use crate::token::LiteralToken;
 use crate::token::Token;
 use crate::token::TokenType;
@@ -31,7 +33,7 @@ impl<'a> Lexer<'a> {
         }
     }
 
-    pub fn scan_tokens(&mut self) -> &Vec<Token> {
+    pub fn scan_tokens(&mut self) -> Vec<Token> {
         while !self.is_at_end() {
             self.start = self.current;
             self.tokenize();
@@ -43,7 +45,7 @@ impl<'a> Lexer<'a> {
             line: self.line,
         });
 
-        &self.tokens
+        mem::take(&mut self.tokens)
     }
 
     fn tokenize(&mut self) {
@@ -90,7 +92,11 @@ impl<'a> Lexer<'a> {
                 if self.is_alpha(ch) {
                     self.identifier();
                 } else {
-                    error::lexer_error(self.line, "Unexpected character.");
+                    LoxiteError::Lexer(LexerError {
+                        line: self.line,
+                        message: "Unexpected character".to_string(),
+                    })
+                    .print();
                     self.had_error = true;
                 }
             }
@@ -135,7 +141,11 @@ impl<'a> Lexer<'a> {
         }
 
         if self.is_at_end() {
-            error::lexer_error(self.line, "Unterminaded string");
+            LoxiteError::Lexer(LexerError {
+                line: self.line,
+                message: "Unterminaded string".to_string(),
+            })
+            .print();
             self.had_error = true;
             return;
         }

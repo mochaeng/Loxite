@@ -4,23 +4,29 @@ use std::{
     process::exit,
 };
 
-use loxite::lexer::Lexer;
+use loxite::{ast_printer::AstPrinter, lexer::Lexer, parser::Parser};
 
-fn run(source: &String) -> bool {
+fn run(source: &String) {
     let mut lexer = Lexer::new(source);
     let tokens = lexer.scan_tokens();
+    if lexer.had_error {
+        return;
+    }
 
-    tokens.into_iter().for_each(|token| println!("{:?}", token));
-    lexer.had_error
+    let mut parser = Parser::new(tokens);
+    let expression = parser.parser();
+    if let None = expression {
+        return;
+    }
+
+    let expression = expression.unwrap();
+    let result_str = AstPrinter.get_expr_as_str(expression);
+    println!("{}", result_str);
 }
 
 fn run_file(path: &String) {
     let source = fs::read_to_string(path).expect("Could not read the file");
-    let had_error = run(&source);
-
-    if had_error {
-        exit(65);
-    }
+    run(&source);
 }
 
 fn run_prompt() {

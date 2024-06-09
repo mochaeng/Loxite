@@ -1,45 +1,65 @@
-pub mod parser {
-    use crate::token::{Token, TokenType};
-    use std::{
-        error::Error,
-        fmt::{self},
-    };
+use std::{
+    error::Error,
+    fmt::{self},
+};
 
-    #[derive(Debug)]
-    pub struct ParserError {
-        pub token: Token,
-        pub message: String,
-    }
+use crate::token::{Token, TokenType};
 
-    impl fmt::Display for ParserError {
-        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-            let location = match self.token.token_type {
-                TokenType::EOF => " at end".to_string(),
-                _ => format!(" at '{}'", self.token.lexeme),
-            };
+pub type Result<T> = std::result::Result<T, LoxiteError>;
 
-            write!(
+#[derive(Debug)]
+pub struct ParserError {
+    pub token: Token,
+    pub message: String,
+}
+
+#[derive(Debug)]
+pub struct LexerError {
+    pub line: usize,
+    pub message: String,
+}
+
+#[derive(Debug)]
+pub enum LoxiteError {
+    Lexer(LexerError),
+    Parser(ParserError),
+}
+
+impl fmt::Display for LoxiteError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            LoxiteError::Lexer(err) => write!(
                 f,
-                "[line {}] Error{}: {}",
-                self.token.line, location, self.message
-            )
-        }
-    }
+                "lexer error: [line {}] Error{}: {}",
+                err.line, "", err.message
+            ),
+            LoxiteError::Parser(err) => {
+                let location = match err.token.token_type {
+                    TokenType::EOF => " at end".to_string(),
+                    _ => format!(" at '{}'", err.token.lexeme),
+                };
 
-    impl Error for ParserError {}
-
-    pub type Result<T> = std::result::Result<T, ParserError>;
-
-    impl ParserError {
-        pub fn print(&self) {
-            eprintln!("{}", self);
+                write!(
+                    f,
+                    "parser error: [line {}] Error{}: {}",
+                    err.token.line, location, err.message
+                )
+            }
         }
     }
 }
 
-fn report(line: usize, where_in: &str, message: &str) {
-    eprintln!("[line {}] Error{}: {}", line, where_in, message);
+impl LoxiteError {
+    pub fn print(&self) {
+        eprintln!("{}", self);
+    }
 }
-pub fn lexer_error(line: usize, message: &str) {
-    report(line, "", message)
+
+impl Error for LoxiteError {
+    fn description(&self) -> &str {
+        match self {
+            LoxiteError::Lexer(_) => "lexer error",
+            LoxiteError::Parser(_) => "parser error",
+        }
+    }
 }
