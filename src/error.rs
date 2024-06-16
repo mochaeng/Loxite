@@ -20,9 +20,16 @@ pub struct LexerError {
 }
 
 #[derive(Debug)]
+pub struct RuntimeError {
+    pub token: Token,
+    pub message: String,
+}
+
+#[derive(Debug)]
 pub enum LoxiteError {
     Lexer(LexerError),
     Parser(ParserError),
+    Runtime(RuntimeError),
 }
 
 impl fmt::Display for LoxiteError {
@@ -45,6 +52,7 @@ impl fmt::Display for LoxiteError {
                     err.token.line, location, err.message
                 )
             }
+            LoxiteError::Runtime(err) => write!(f, "Runtime Error: "),
         }
     }
 }
@@ -58,8 +66,9 @@ impl LoxiteError {
 impl Error for LoxiteError {
     fn description(&self) -> &str {
         match self {
-            LoxiteError::Lexer(_) => "lexer error",
-            LoxiteError::Parser(_) => "parser error",
+            LoxiteError::Lexer(_) => "a error during lexical phase",
+            LoxiteError::Parser(_) => "a error during parser phase",
+            LoxiteError::Runtime(_) => "a error during runtime",
         }
     }
 }
