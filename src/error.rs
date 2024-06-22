@@ -25,6 +25,29 @@ pub struct RuntimeError {
     pub message: String,
 }
 
+impl RuntimeError {
+    pub fn number_operands(token: &Token) -> Self {
+        Self {
+            token: token.clone(),
+            message: String::from("Operands must be numbers."),
+        }
+    }
+
+    pub fn number_or_string_operands(token: &Token) -> Self {
+        Self {
+            token: token.clone(),
+            message: String::from("Operands must be two integers or two strings."),
+        }
+    }
+
+    pub fn error(token: &Token, msg: &str) -> Self {
+        Self {
+            token: token.clone(),
+            message: msg.to_string(),
+        }
+    }
+}
+
 #[derive(Debug)]
 pub enum LoxiteError {
     Lexer(LexerError),
@@ -37,7 +60,7 @@ impl fmt::Display for LoxiteError {
         match self {
             LoxiteError::Lexer(err) => write!(
                 f,
-                "lexer error: [line {}] Error{}: {}",
+                "Lexer error: [line {}] Error{}: {}",
                 err.line, "", err.message
             ),
             LoxiteError::Parser(err) => {
@@ -48,11 +71,15 @@ impl fmt::Display for LoxiteError {
 
                 write!(
                     f,
-                    "parser error: [line {}] Error{}: {}",
+                    "Parser error: [line {}] Error{}: {}",
                     err.token.line, location, err.message
                 )
             }
-            LoxiteError::Runtime(err) => write!(f, "Runtime Error: "),
+            LoxiteError::Runtime(err) => write!(
+                f,
+                "Runtime Error: [line {}]: {}",
+                err.token.line, err.message
+            ),
         }
     }
 }
@@ -66,9 +93,9 @@ impl LoxiteError {
 impl Error for LoxiteError {
     fn description(&self) -> &str {
         match self {
-            LoxiteError::Lexer(_) => "a error during lexical phase",
-            LoxiteError::Parser(_) => "a error during parser phase",
-            LoxiteError::Runtime(_) => "a error during runtime",
+            LoxiteError::Lexer(_) => "an error during lexical phase",
+            LoxiteError::Parser(_) => "an error during parser phase",
+            LoxiteError::Runtime(_) => "an error during runtime",
         }
     }
 }

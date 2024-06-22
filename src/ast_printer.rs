@@ -3,7 +3,7 @@ use crate::{expr::Expr, token::TokenLiteral};
 pub struct AstPrinter;
 
 impl AstPrinter {
-    pub fn get_expr_as_str(&self, expr: Expr) -> String {
+    pub fn get_expr_as_str(&self, expr: &Expr) -> String {
         expr.print_expr()
     }
 }
@@ -67,8 +67,8 @@ mod tests {
         }));
 
         let ast_printer = AstPrinter;
-        assert_eq!(ast_printer.get_expr_as_str(expr1), "(- 123)");
-        assert_eq!(ast_printer.get_expr_as_str(expr2), "(group 45.67)");
+        assert_eq!(ast_printer.get_expr_as_str(&expr1), "(- 123)");
+        assert_eq!(ast_printer.get_expr_as_str(&expr2), "(group 45.67)");
     }
 
     #[test]
@@ -100,7 +100,7 @@ mod tests {
 
         let ast_printer = AstPrinter;
         assert_eq!(
-            ast_printer.get_expr_as_str(expr),
+            ast_printer.get_expr_as_str(&expr),
             "(* (- 123) (group 45.67))"
         );
     }
